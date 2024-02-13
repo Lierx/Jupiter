@@ -27,4 +27,4 @@ Jupiter es una **Raid Tool** que te permite administrar y monitorear un bot de r
 - `En tu navegador abre http://localhost:3000/`
 
 ---
-[**GUIA DE USO**](usage.md)
+[**GUIA DE USO**](https://youtu.be/zEKeLvMkzoM?si=9K2htIEQRsS_A3Ag)https://youtu.be/zEKeLvMkzoM?si=9K2htIEQRsS_A3Ag)
