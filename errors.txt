@@ -1,0 +1,11 @@
+[ Archivo de Logueo de errores, te recomendamos no modificar ni eliminar nada de este archivo ]
+============================ (23:21) 10-2-2024
+Cannot delete a channel required for community servers
+============================ (23:21) 10-2-2024
+Cannot delete a channel required for community servers
+============================ (23:25) 10-2-2024
+listen EADDRINUSE: address already in use :::3000
+============================ (23:25) 10-2-2024
+listen EADDRINUSE: address already in use :::3000
+============================ (23:27) 10-2-2024
+listen EADDRINUSE: address already in use :::3000

